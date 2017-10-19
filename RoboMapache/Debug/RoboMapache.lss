@@ -3,29 +3,29 @@ RoboMapache.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .data         00000000  00800100  00800100  00000146  2**0
+  0 .data         00000000  00800100  00800100  00000116  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  1 .text         000000f2  00000000  00000000  00000054  2**1
+  1 .text         000000c2  00000000  00000000  00000054  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .comment      00000030  00000000  00000000  00000146  2**0
+  2 .comment      00000030  00000000  00000000  00000116  2**0
                   CONTENTS, READONLY
-  3 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  00000178  2**2
+  3 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  00000148  2**2
                   CONTENTS, READONLY
-  4 .debug_aranges 00000038  00000000  00000000  000001b8  2**0
+  4 .debug_aranges 00000038  00000000  00000000  00000188  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_info   000006f5  00000000  00000000  000001f0  2**0
+  5 .debug_info   000006e1  00000000  00000000  000001c0  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_abbrev 00000642  00000000  00000000  000008e5  2**0
+  6 .debug_abbrev 00000634  00000000  00000000  000008a1  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_line   0000028f  00000000  00000000  00000f27  2**0
+  7 .debug_line   00000283  00000000  00000000  00000ed5  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_frame  00000054  00000000  00000000  000011b8  2**2
+  8 .debug_frame  00000054  00000000  00000000  00001158  2**2
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    0000037e  00000000  00000000  0000120c  2**0
+  9 .debug_str    0000037e  00000000  00000000  000011ac  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_loc    0000006f  00000000  00000000  0000158a  2**0
+ 10 .debug_loc    0000006f  00000000  00000000  0000152a  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_ranges 00000028  00000000  00000000  000015f9  2**0
+ 11 .debug_ranges 00000028  00000000  00000000  00001599  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -49,7 +49,7 @@ Disassembly of section .text:
   3c:	0c 94 3e 00 	jmp	0x7c	; 0x7c <__bad_interrupt>
   40:	0c 94 3e 00 	jmp	0x7c	; 0x7c <__bad_interrupt>
   44:	0c 94 3e 00 	jmp	0x7c	; 0x7c <__bad_interrupt>
-  48:	0c 94 55 00 	jmp	0xaa	; 0xaa <__vector_18>
+  48:	0c 94 40 00 	jmp	0x80	; 0x80 <__vector_18>
   4c:	0c 94 3e 00 	jmp	0x7c	; 0x7c <__bad_interrupt>
   50:	0c 94 3e 00 	jmp	0x7c	; 0x7c <__bad_interrupt>
   54:	0c 94 3e 00 	jmp	0x7c	; 0x7c <__bad_interrupt>
@@ -65,132 +65,77 @@ Disassembly of section .text:
   6e:	d8 e0       	ldi	r29, 0x08	; 8
   70:	de bf       	out	0x3e, r29	; 62
   72:	cd bf       	out	0x3d, r28	; 61
-  74:	0e 94 71 00 	call	0xe2	; 0xe2 <main>
-  78:	0c 94 77 00 	jmp	0xee	; 0xee <_exit>
+  74:	0e 94 5c 00 	call	0xb8	; 0xb8 <main>
+  78:	0c 94 5f 00 	jmp	0xbe	; 0xbe <_exit>
 
 0000007c <__bad_interrupt>:
   7c:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
 
-00000080 <conf_puertos>:
-void conf_USART0();
-
-
-//CONFIGURACION DE DIRECCIONAMIENTO DE LOS PUERTOS
-void conf_puertos(){
-	DDRC = 0b001111; //Configuramos PC0 a PC3 como salida
-  80:	8f e0       	ldi	r24, 0x0F	; 15
-  82:	87 b9       	out	0x07, r24	; 7
-	DDRD = 0b00000010; //Configuramos TX (PD1) como salida y RX (PD0) como entrada
-  84:	82 e0       	ldi	r24, 0x02	; 2
-  86:	8a b9       	out	0x0a, r24	; 10
-	PORTC = 0b000000; //Limpiamos el puerto C para evitar que tenga basura en la salida	
-  88:	18 b8       	out	0x08, r1	; 8
-  8a:	08 95       	ret
-
-0000008c <con_USART0>:
-}
-
-//CONFGURACION DEL PUERTO SERIAL
-void con_USART0(){
-	 UCSR0A = (0<<TXC0)|(0<<U2X0)|(0<<MPCM0); //No configuramos la velocidad al doble (X2) ni habilitamos la comunicacion multiprocesador
-  8c:	10 92 c0 00 	sts	0x00C0, r1	; 0x8000c0 <__TEXT_REGION_LENGTH__+0x7e00c0>
-	 //0<<TXC0 -> Trasnmision finalizada
-	 //0<<U2X0 -> Multiplicar la velocidad de transmision x2
-	 //0<<MPCM0 -> Tener una comunicacion multiprocesador
-	 
-	 UCSR0B = (1<<RXCIE0)|(0<<TXCIE0)|(0<<UDRIE0)|(1<<RXEN0)|(1<<TXEN0)|(0<<UCSZ02)|(0<<TXB80); //Habilitamos la interrupcion de recepcion de datos	 
-  90:	88 e9       	ldi	r24, 0x98	; 152
-  92:	80 93 c1 00 	sts	0x00C1, r24	; 0x8000c1 <__TEXT_REGION_LENGTH__+0x7e00c1>
-	 //<<UDRIE0 -> Habilitar el control de errores
-	 //<<RXEN0 -> Habilitar la rececpcion de datos por el puerto serial
-	 //<<TXEN0 -> Habilitar la trasmision de datos por el puerto serial
-	 //UCSZ02Configurar el numero de bit de datos
+00000080 <__vector_18>:
 	
-	 UCSR0C = (0<<UMSEL01)|(0<<UMSEL00)|(0<<UPM01)|(0<<UPM00)|(0<<USBS0)|(1<<UCSZ01)|(1<<UCSZ00)|(0<<UCPOL0); //Configuramos el USART asincrono, 1 bit de stop y 8 bit de datos
-  96:	86 e0       	ldi	r24, 0x06	; 6
-  98:	80 93 c2 00 	sts	0x00C2, r24	; 0x8000c2 <__TEXT_REGION_LENGTH__+0x7e00c2>
-	 //<<UMSEL -> Habilitar el uso sincrono 0 o asincrono 1
-	 //<<UPM -> Habilitar paridad
-	 //<<USBS -> Cambiar el numero de bit de datos que se van a usar
-	 //<<UCSZ -> Polaridad 1 - Ejes de bajada 0 - ejes de salida
-	 
-	 UBRR0 = 95; //Utilizamos un cristal de 14.7456Mhz a 9600 bps
-  9c:	8f e5       	ldi	r24, 0x5F	; 95
-  9e:	90 e0       	ldi	r25, 0x00	; 0
-  a0:	90 93 c5 00 	sts	0x00C5, r25	; 0x8000c5 <__TEXT_REGION_LENGTH__+0x7e00c5>
-  a4:	80 93 c4 00 	sts	0x00C4, r24	; 0x8000c4 <__TEXT_REGION_LENGTH__+0x7e00c4>
-  a8:	08 95       	ret
-
-000000aa <__vector_18>:
-	 
 }
 
 ISR(USART_RX_vect,ISR_NAKED){
 	char dato;
-	dato = UDR0; //Dato-comando recibido de 8 bits 
-  aa:	e6 ec       	ldi	r30, 0xC6	; 198
-  ac:	f0 e0       	ldi	r31, 0x00	; 0
-  ae:	80 81       	ld	r24, Z
+	dato = UDR0; //Dato-comando recibido de 8 bits
+  80:	e6 ec       	ldi	r30, 0xC6	; 198
+  82:	f0 e0       	ldi	r31, 0x00	; 0
+  84:	80 81       	ld	r24, Z
 	UDR0 = dato; //Echo, es decir regresa el valor que le mandemos
-  b0:	80 83       	st	Z, r24
+  86:	80 83       	st	Z, r24
 	//Codigo para controlar el giro de las llantas del robot
 	switch(dato){
-  b2:	84 36       	cpi	r24, 0x64	; 100
-  b4:	89 f0       	breq	.+34     	; 0xd8 <__vector_18+0x2e>
-  b6:	18 f4       	brcc	.+6      	; 0xbe <__vector_18+0x14>
-  b8:	81 36       	cpi	r24, 0x61	; 97
-  ba:	59 f0       	breq	.+22     	; 0xd2 <__vector_18+0x28>
-  bc:	10 c0       	rjmp	.+32     	; 0xde <__vector_18+0x34>
-  be:	83 37       	cpi	r24, 0x73	; 115
-  c0:	29 f0       	breq	.+10     	; 0xcc <__vector_18+0x22>
-  c2:	87 37       	cpi	r24, 0x77	; 119
-  c4:	61 f4       	brne	.+24     	; 0xde <__vector_18+0x34>
+  88:	84 36       	cpi	r24, 0x64	; 100
+  8a:	89 f0       	breq	.+34     	; 0xae <__vector_18+0x2e>
+  8c:	18 f4       	brcc	.+6      	; 0x94 <__vector_18+0x14>
+  8e:	81 36       	cpi	r24, 0x61	; 97
+  90:	59 f0       	breq	.+22     	; 0xa8 <__vector_18+0x28>
+  92:	10 c0       	rjmp	.+32     	; 0xb4 <__vector_18+0x34>
+  94:	83 37       	cpi	r24, 0x73	; 115
+  96:	29 f0       	breq	.+10     	; 0xa2 <__vector_18+0x22>
+  98:	87 37       	cpi	r24, 0x77	; 119
+  9a:	61 f4       	brne	.+24     	; 0xb4 <__vector_18+0x34>
 		case 'w':
-			PORTC = 0b000101;
-  c6:	85 e0       	ldi	r24, 0x05	; 5
-  c8:	88 b9       	out	0x08, r24	; 8
-			break;
-  ca:	0a c0       	rjmp	.+20     	; 0xe0 <__vector_18+0x36>
+		PORTC = 0b001010; //Avanza hacia adelante
+  9c:	8a e0       	ldi	r24, 0x0A	; 10
+  9e:	88 b9       	out	0x08, r24	; 8
+		break;
+  a0:	0a c0       	rjmp	.+20     	; 0xb6 <__vector_18+0x36>
 		case 's':
-			PORTC = 0b001010;
-  cc:	8a e0       	ldi	r24, 0x0A	; 10
-  ce:	88 b9       	out	0x08, r24	; 8
-			break;
-  d0:	07 c0       	rjmp	.+14     	; 0xe0 <__vector_18+0x36>
+		PORTC = 0b000101; //Avanza hacia atrás
+  a2:	85 e0       	ldi	r24, 0x05	; 5
+  a4:	88 b9       	out	0x08, r24	; 8
+		break;
+  a6:	07 c0       	rjmp	.+14     	; 0xb6 <__vector_18+0x36>
 		case 'a':
-			PORTC = 0b000110; 
-  d2:	86 e0       	ldi	r24, 0x06	; 6
-  d4:	88 b9       	out	0x08, r24	; 8
-			break;
-  d6:	04 c0       	rjmp	.+8      	; 0xe0 <__vector_18+0x36>
+		PORTC = 0b001000; //Gira a la derecha
+  a8:	88 e0       	ldi	r24, 0x08	; 8
+  aa:	88 b9       	out	0x08, r24	; 8
+		break;
+  ac:	04 c0       	rjmp	.+8      	; 0xb6 <__vector_18+0x36>
 		case 'd':
-			PORTC = 0b001001;
-  d8:	89 e0       	ldi	r24, 0x09	; 9
-  da:	88 b9       	out	0x08, r24	; 8
-			break;
-  dc:	01 c0       	rjmp	.+2      	; 0xe0 <__vector_18+0x36>
+		PORTC = 0b000010; //Gira a la izquierda
+  ae:	82 e0       	ldi	r24, 0x02	; 2
+  b0:	88 b9       	out	0x08, r24	; 8
+		break;
+  b2:	01 c0       	rjmp	.+2      	; 0xb6 <__vector_18+0x36>
 		default:
-			PORTC = 0b000000;
-  de:	18 b8       	out	0x08, r1	; 8
+		PORTC = 0b000000; //Cualquier tecla diferente de las opciones anteriores lo detiene
+  b4:	18 b8       	out	0x08, r1	; 8
 	}
-	reti();
-  e0:	18 95       	reti
+	reti(); //Regresa a la interrupción y limpia las banderas de interrupción
+  b6:	18 95       	reti
 
-000000e2 <main>:
+000000b8 <main>:
 }
 
-int main(void)
-{
-	conf_puertos(); //Configuramos los puertos
-  e2:	0e 94 40 00 	call	0x80	; 0x80 <conf_puertos>
-	con_USART0(); //Configuramos el puerto serial
-  e6:	0e 94 46 00 	call	0x8c	; 0x8c <con_USART0>
-	sei(); //Habilita la 
-  ea:	78 94       	sei
-  ec:	ff cf       	rjmp	.-2      	; 0xec <main+0xa>
+int main(void){}
+  b8:	80 e0       	ldi	r24, 0x00	; 0
+  ba:	90 e0       	ldi	r25, 0x00	; 0
+  bc:	08 95       	ret
 
-000000ee <_exit>:
-  ee:	f8 94       	cli
+000000be <_exit>:
+  be:	f8 94       	cli
 
-000000f0 <__stop_program>:
-  f0:	ff cf       	rjmp	.-2      	; 0xf0 <__stop_program>
+000000c0 <__stop_program>:
+  c0:	ff cf       	rjmp	.-2      	; 0xc0 <__stop_program>
